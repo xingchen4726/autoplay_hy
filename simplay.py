@@ -3,6 +3,15 @@ import pyautogui
 import pyperclip
 import pyscreeze
 import time
+import keyboard
+
+# 全局退出标志
+exit_flag = False
+
+def on_key_press(event):
+    global exit_flag
+    if event.name == 'q':
+        exit_flag = True
 
 # 定义K值，控制循环次数
 K = 0
@@ -13,7 +22,8 @@ tolerance = 20     # 设置颜色容差（可选，默认为0）
 target_color = (188, 101, 219)  # 示例：紫色
 
 def end():
-    while True:
+    global exit_flag
+    while not exit_flag:
         try:
             # 尝试找到退出图像
             endlocation = pyautogui.locateOnScreen('end2.png', confidence=confidence_threshold)
@@ -77,7 +87,8 @@ def check_and_move(x_target, y_target, x_move, y_move, direction):
 
 
 def run():
-    while True:
+    global exit_flag
+    while not exit_flag:
         
 
         # 使用函数简化代码
@@ -127,27 +138,31 @@ screen_width, screen_height = pyautogui.size()
 print(f"屏幕分辨率: {screen_width}x{screen_height}")
 
 
-# 大循环
-while  K<20:
-    try:
-        # 尝试找到开始图像
-        startlocation = pyautogui.locateOnScreen('start2.png', confidence=confidence_threshold)
-        if startlocation:
-            print("开始图像找到，位置：", startlocation)
-            # 如果识别到start图片，点击其中心位置
-            start_center = pyscreeze.center(startlocation)
-            pyautogui.click(start_center)
-            K=K+1
-            print("开始第"+str(K)+"局")
-            time.sleep(15)
-            run()
-        else:
-            print("开始图像未找到")
-    except pyautogui.ImageNotFoundException:
-        print("开始图像未找到，继续运行程序")
-        # 在这里可以添加找不到图片时的处理逻辑
-    except Exception as e:
-        print("其他错误：", e)
+# 设置键盘监听
+keyboard.on_press(on_key_press)
+
+try:
+    # 大循环
+    while K < 20 and not exit_flag:
+        try:
+            # 尝试找到开始图像
+            startlocation = pyautogui.locateOnScreen('start2.png', confidence=confidence_threshold)
+            if startlocation:
+                print("开始图像找到，位置：", startlocation)
+                # 如果识别到start图片，点击其中心位置
+                start_center = pyscreeze.center(startlocation)
+                pyautogui.click(start_center)
+                K=K+1
+                print("开始第"+str(K)+"局")
+                time.sleep(15)
+                run()
+            else:
+                print("开始图像未找到")
+        except pyautogui.ImageNotFoundException:
+            print("开始图像未找到，继续运行程序")
+            # 在这里可以添加找不到图片时的处理逻辑
+        except Exception as e:
+            print("其他错误：", e)
         
 
 
@@ -155,4 +170,6 @@ while  K<20:
 
     
 
+finally:
+    keyboard.unhook_all()
 print("脚本执行完毕")
