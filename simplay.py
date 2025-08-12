@@ -3,15 +3,18 @@ import pyautogui
 import pyperclip
 import pyscreeze
 import time
-import keyboard
+from pynput import keyboard
 
 # 全局退出标志
 exit_flag = False
 
-def on_key_press(event):
+def on_key_press(key):
     global exit_flag
-    if event.name == 'q':
-        exit_flag = True
+    try:
+        if key.char == 'q':
+            exit_flag = True
+    except AttributeError:
+        pass
 
 # 定义K值，控制循环次数
 K = 0
@@ -20,6 +23,9 @@ run = 0
 confidence_threshold = 0.8     #图片相似度
 tolerance = 20     # 设置颜色容差（可选，默认为0）
 target_color = (188, 101, 219)  # 示例：紫色
+
+# 创建键盘监听器
+keyboard_listener = keyboard.Listener(on_press=on_key_press)
 
 def end():
     global exit_flag
@@ -33,30 +39,45 @@ def end():
                 end_center = pyscreeze.center(endlocation)
                 pyautogui.click(end_center)
                 print("退出对局")
+                # pyautogui.mouseDown(1779, 382, button='left')
+                # time.sleep(8)
+                # pyautogui.mouseUp(1779, 382, button='left')
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 time.sleep(4)
+                # pyautogui.mouseDown(1779, 382, button='left')
+                # time.sleep(8)
+                # pyautogui.mouseUp(1779, 382, button='left')
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 time.sleep(4)
+                # pyautogui.mouseDown(1779, 382, button='left')
+                # time.sleep(8)
+                # pyautogui.mouseUp(1779, 382, button='left')
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 time.sleep(4)
+                # pyautogui.mouseDown(1779, 382, button='left')
+                # time.sleep(8)
+                # pyautogui.mouseUp(1779, 382, button='left')
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 pyautogui.click(1500, 900)
                 time.sleep(4)
+                # pyautogui.mouseDown(1779, 382, button='left')
+                # time.sleep(8)
+                # pyautogui.mouseUp(1779, 382, button='left')
                 pyautogui.click(1500, 900)
                 return
             else:
@@ -105,6 +126,8 @@ def run():
         
         # 每次操作后等待6秒
         time.sleep(2)
+        pyautogui.click(1118, 1229)
+        time.sleep(1)
         try:
             # 尝试找到继续图像
             continuelocation = pyautogui.locateOnScreen('continue2.png', confidence=confidence_threshold)
@@ -138,8 +161,8 @@ screen_width, screen_height = pyautogui.size()
 print(f"屏幕分辨率: {screen_width}x{screen_height}")
 
 
-# 设置键盘监听
-keyboard.on_press(on_key_press)
+# 启动键盘监听
+keyboard_listener.start()
 
 try:
     # 大循环
@@ -171,5 +194,5 @@ try:
     
 
 finally:
-    keyboard.unhook_all()
+    keyboard_listener.stop()
 print("脚本执行完毕")
